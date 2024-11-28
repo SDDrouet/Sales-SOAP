@@ -47,8 +47,7 @@ namespace BLL
             {
                 // Validar que el nombre del producto no exista
                 Products temp = r.Retrieve<Products>
-                    (p => p.productName == productsToUpdate.productName
-                    && p.id != productsToUpdate.id);
+                    (p => p.productName != productsToUpdate.productName);
                 if (temp != null)
                 {
                     res = r.Update(productsToUpdate);
@@ -95,8 +94,15 @@ namespace BLL
 
             using (var repository = RepositoryFactory.CreateRepository())
             {
-                res = repository.Filter<Products>(
+                if (filterName == "")
+                {
+                    res = repository.Filter<Products>(p => true);
+                } else
+                {
+                    res = repository.Filter<Products>(
                     p => p.productName == filterName);
+                }
+                
             }
 
             return res;

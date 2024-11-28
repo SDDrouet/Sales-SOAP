@@ -26,5 +26,20 @@ namespace Service.Controllers
             var isDeleted = productLogic.Delete(id);
             return isDeleted;
         }
+
+        public List<Products> GetByName(string filterName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Products RetrieveById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateProduct(Products productsToUpdate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

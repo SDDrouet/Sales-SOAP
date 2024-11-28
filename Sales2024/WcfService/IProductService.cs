@@ -5,22 +5,22 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
+using WcfService.DTO;
 
-namespace SLC
+namespace WcfService
 {
     [ServiceContract]
     public interface IProductService
     {
         [OperationContract]
-        Products CreateProducts(Products products);
+        ProductDTO CreateProducts(ProductDTO products);
         [OperationContract]
         bool Delete(int  id);
         [OperationContract]
-        List<Products> GetByName(String filterName);
+        List<ProductDTO> GetByName(String filterName);
         [OperationContract]
-        Products RetrieveById(int id);
+        ProductDTO RetrieveById(int id);
         [OperationContract]
-        bool UpdateProduct(Products productsToUpdate);
+        bool UpdateProduct(ProductDTO productsToUpdate);
     }
 }

@@ -5,22 +5,25 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
 
 namespace SLC
 {
     [ServiceContract]
-    public interface IProductService
+    public interface ICategoriesService
     {
         [OperationContract]
-        Products CreateProducts(Products products);
+        Categories CreateCategory(Categories categoryDTO);
+
         [OperationContract]
-        bool Delete(int  id);
+        bool UpdateCategory(Categories categoryDTO);
+
         [OperationContract]
-        List<Products> GetByName(String filterName);
+        bool DeleteCategory(int id);
+
         [OperationContract]
-        Products RetrieveById(int id);
+        Categories RetrieveCategory(int id);
+
         [OperationContract]
-        bool UpdateProduct(Products productsToUpdate);
+        List<Categories> GetAllCategories();
     }
 }
