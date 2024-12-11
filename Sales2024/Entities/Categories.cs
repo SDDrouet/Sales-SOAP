@@ -11,6 +11,7 @@ namespace Entities
 {
     using System;
     using System.Collections.Generic;
+    using Newtonsoft.Json;
     
     public partial class Categories
     {
@@ -25,6 +26,7 @@ namespace Entities
         public string description { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Products> Products { get; set; }
     }
 }

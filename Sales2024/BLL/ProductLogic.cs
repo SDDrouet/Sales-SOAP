@@ -94,7 +94,7 @@ namespace BLL
 
             using (var repository = RepositoryFactory.CreateRepository())
             {
-                if (filterName == "")
+                if (filterName == "" || filterName == null)
                 {
                     res = repository.Filter<Products>(p => true);
                 } else

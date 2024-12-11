@@ -8,22 +8,12 @@ using System.Threading.Tasks;
 
 namespace SLC
 {
-    [ServiceContract]
     public interface ICategoriesService
     {
-        [OperationContract]
-        Categories CreateCategory(Categories categoryDTO);
-
-        [OperationContract]
-        bool UpdateCategory(Categories categoryDTO);
-
-        [OperationContract]
+        Categories CreateCategory(Categories category);
+        bool UpdateCategory(Categories category);
         bool DeleteCategory(int id);
-
-        [OperationContract]
         Categories RetrieveCategory(int id);
-
-        [OperationContract]
         List<Categories> GetAllCategories();
     }
 }

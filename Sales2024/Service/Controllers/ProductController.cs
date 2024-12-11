@@ -1,11 +1,7 @@
 ﻿using BLL;
 using Entities;
 using SLC;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace Service.Controllers
@@ -20,6 +16,7 @@ namespace Service.Controllers
             return product;
         }
 
+        [HttpDelete]
         public bool Delete(int id)
         {
             var productLogic = new ProductLogic();
@@ -27,19 +24,28 @@ namespace Service.Controllers
             return isDeleted;
         }
 
+        [HttpGet]
         public List<Products> GetByName(string filterName)
         {
-            throw new NotImplementedException();
+            var productLogic = new ProductLogic();
+            var products = productLogic.Filter(filterName);
+            return products;
         }
 
+        [HttpGet]
         public Products RetrieveById(int id)
         {
-            throw new NotImplementedException();
+            var productLogic = new ProductLogic();
+            var product = productLogic.RetrieveById(id);
+            return product;
         }
 
+        [HttpPut]
         public bool UpdateProduct(Products productsToUpdate)
         {
-            throw new NotImplementedException();
+            var productLogic = new ProductLogic();
+            var isUpdated = productLogic.Update(productsToUpdate);
+            return isUpdated;
         }
     }
 }

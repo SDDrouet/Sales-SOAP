@@ -9,10 +9,10 @@
 
 namespace Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
-    [Serializable]
     public partial class Products
     {
         public int id { get; set; }
@@ -20,7 +20,8 @@ namespace Entities
         public int categoryId { get; set; }
         public decimal unitPrice { get; set; }
         public int unitInStock { get; set; }
-    
+
+        [JsonIgnore]
         public virtual Categories Categories { get; set; }
     }
 }
