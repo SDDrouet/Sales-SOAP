@@ -21,7 +21,8 @@ CREATE TABLE Users (
     username NVARCHAR(50) NOT NULL,  -- Nombre de usuario
     password NVARCHAR(255) NOT NULL, -- Contraseña (encriptada preferiblemente)
     email NVARCHAR(100) NOT NULL,    -- Correo electrónico
-    rol NVARCHAR(50) NOT NULL        -- Rol del usuario
+    rol NVARCHAR(50) NOT NULL,        -- Rol del usuario
+    status INT DEFAULT 1              -- Estado del usuario (1 = Activo, 0 = Inactivo)
 );
 
 -- Crear tabla 'logs'

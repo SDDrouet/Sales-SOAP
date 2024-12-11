@@ -41,6 +41,7 @@
           <Property Name="password" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="email" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="rol" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="status" Type="int" />
         </EntityType>
         <Association Name="FK_Products_Categories">
           <End Role="Categories" Type="Self.Categories" Multiplicity="1">
@@ -132,6 +133,7 @@
           <Property Name="password" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="rol" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -172,6 +174,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="SalesDBModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="rol" ColumnName="rol" />
                 <ScalarProperty Name="email" ColumnName="email" />
                 <ScalarProperty Name="password" ColumnName="password" />
