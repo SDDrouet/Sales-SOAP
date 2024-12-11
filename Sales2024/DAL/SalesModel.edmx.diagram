@@ -8,6 +8,8 @@
         <EntityTypeShape EntityType="SalesDBModel.Categories" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="SalesDBModel.Products" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
         <AssociationConnector Association="SalesDBModel.FK_Products_Categories" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="SalesDBModel.Logs" Width="1.5" PointX="7.625" PointY="2" />
+        <EntityTypeShape EntityType="SalesDBModel.Users" Width="1.5" PointX="5.25" PointY="1.625" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
