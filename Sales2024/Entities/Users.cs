@@ -20,5 +20,6 @@ namespace Entities
         public string email { get; set; }
         public string rol { get; set; }
         public Nullable<int> status { get; set; }
+        public Nullable<int> loginAttempts { get; set; }
     }
 }

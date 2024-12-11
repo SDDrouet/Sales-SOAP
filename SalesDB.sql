@@ -23,6 +23,7 @@ CREATE TABLE Users (
     email NVARCHAR(100) NOT NULL,    -- Correo electrónico
     rol NVARCHAR(50) NOT NULL,        -- Rol del usuario
     status INT DEFAULT 1              -- Estado del usuario (1 = Activo, 0 = Inactivo)
+    loginAttempts INT DEFAULT 0       -- Intentos de inicio de sesión
 );
 
 -- Crear tabla 'logs'
