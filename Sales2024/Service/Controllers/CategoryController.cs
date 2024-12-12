@@ -1,5 +1,6 @@
 ﻿using BLL;
 using Entities;
+using Security;
 using SLC;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -9,6 +10,7 @@ namespace Service.Controllers
     public class CategoryController : ApiController, ICategoriesService
     {
         [HttpPost]
+        [AuthorizeRoles("ADMIN", "EDITOR")]
         public Categories CreateCategory(Categories category)
         {
             var categoryLogic = new CategoriesLogic();
@@ -17,6 +19,7 @@ namespace Service.Controllers
         }
 
         [HttpDelete]
+        [AuthorizeRoles("ADMIN", "EDITOR")]
         public bool DeleteCategory(int id)
         {
             var categoryLogic = new CategoriesLogic();
@@ -25,6 +28,7 @@ namespace Service.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoles("ADMIN", "EDITOR", "VIEWER")]
         public List<Categories> GetAllCategories()
         {
             var categoryLogic = new CategoriesLogic();
@@ -33,6 +37,7 @@ namespace Service.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoles("ADMIN", "EDITOR", "VIEWER")]
         public Categories RetrieveCategory(int id)
         {
             var categoryLogic = new CategoriesLogic();
@@ -41,6 +46,7 @@ namespace Service.Controllers
         }
 
         [HttpPut]
+        [AuthorizeRoles("ADMIN", "EDITOR")]
         public bool UpdateCategory(Categories category)
         {
             var categoryLogic = new CategoriesLogic();

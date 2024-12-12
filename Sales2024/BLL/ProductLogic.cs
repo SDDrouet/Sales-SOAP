@@ -1,5 +1,6 @@
 ﻿using DAL;
 using Entities;
+using Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace BLL
 {
     public class ProductLogic
     {
+        private LogLogic logLogic = new LogLogic();
+
         public Products Create(Products products)
         {
             Products res = null;
@@ -24,6 +27,11 @@ namespace BLL
                 {
                     Console.WriteLine("Producto ya existente");
                 }
+            }
+
+            if (res != null)
+            {
+                logLogic.Create(SessionContext.Username, "Se creo el nuevo producto: " + res.productName + ", con id: " + res.id);
             }
 
             return res;
@@ -56,7 +64,11 @@ namespace BLL
                 {
                     Console.WriteLine("Nombre ya existente");
                 }
+            }
 
+            if (res)
+            {
+                logLogic.Create(SessionContext.Username, "Se actualizo el producto: " + productsToUpdate.productName + ", con id: " + productsToUpdate.id);
             }
 
             return res;
@@ -83,6 +95,11 @@ namespace BLL
             } else
             {
                 Console.WriteLine("No se pudo eliminar: Producto no encontrado");
+            }
+
+            if (res)
+            {
+                logLogic.Create(SessionContext.Username, "Se elimino el producto: " + product.productName + ", con id: " + product.id);
             }
 
             return res;

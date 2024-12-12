@@ -17,6 +17,6 @@ namespace Entities
         public int id { get; set; }
         public string userModification { get; set; }
         public string description { get; set; }
-        public Nullable<System.DateTime> dateLog { get; set; }
+        public DateTime dateLog { get; set; }
     }
 }

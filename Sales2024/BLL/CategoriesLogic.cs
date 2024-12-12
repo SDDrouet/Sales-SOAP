@@ -1,5 +1,6 @@
 ﻿using DAL;
 using Entities;
+using Security;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -8,6 +9,8 @@ namespace BLL
 {
     public class CategoriesLogic
     {
+        private LogLogic logLogic = new LogLogic();
+
         public Categories Create(Categories category)
         {
             Categories res = null;
@@ -24,6 +27,11 @@ namespace BLL
                 {
                     Console.WriteLine("Categoría ya existente");
                 }
+            }
+
+            if (res != null)
+            {
+                logLogic.Create(SessionContext.Username, "Se creó la nueva categoría: " + res.categoryName + ", con id: " + res.id);
             }
 
             return res;
@@ -60,6 +68,11 @@ namespace BLL
                 }
             }
 
+            if (res)
+            {
+                logLogic.Create(SessionContext.Username, "Se actualizó la categoría: " + categoryToUpdate.categoryName + ", con id: " + categoryToUpdate.id);
+            }
+
             return res;
         }
 
@@ -79,6 +92,11 @@ namespace BLL
             else
             {
                 Console.WriteLine("No se pudo eliminar: Categoría no encontrada");
+            }
+
+            if (res)
+            {
+                logLogic.Create(SessionContext.Username, "Se eliminó la categoría: " + category.categoryName + ", con id: " + category.id);
             }
 
             return res;

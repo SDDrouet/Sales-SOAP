@@ -16,6 +16,7 @@ namespace SLC
         string Login(LoginRequest loginRequest);
         bool Logout(string token);
         List<Users> Filter(string filterUsername);
+        bool ActivateAccount(string token);
     }
 
 

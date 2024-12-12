@@ -7,12 +7,14 @@ using System.Web.Http;
 using Entities;
 using SLC;
 using BLL;
+using Security;
 
 namespace Service.Controllers
 {
     public class UserController : ApiController, IUserService
     {
         [HttpPost]
+        [PublicRoute]
         public Users Create(Users user)
         {
             var userLogic = new UserLogic();
@@ -21,6 +23,7 @@ namespace Service.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoles("ADMIN", "EDITOR", "VIEWER")]
         public Users RetrieveById(int id)
         {
             var userLogic = new UserLogic();
@@ -29,6 +32,7 @@ namespace Service.Controllers
         }
 
         [HttpPut]
+        [AuthorizeRoles("ADMIN", "EDITOR", "VIEWER")]
         public bool Update(Users userToUpdate)
         {
             var userLogic = new UserLogic();
@@ -37,6 +41,7 @@ namespace Service.Controllers
         }
 
         [HttpPut]
+        [AuthorizeRoles("ADMIN")]
         public bool ChangeStatus(int id)
         {
             var userLogic = new UserLogic();
@@ -45,6 +50,7 @@ namespace Service.Controllers
         }
 
         [HttpPost]
+        [PublicRoute]
         public string Login(LoginRequest loginRequest)
         {
             var userLogic = new UserLogic();
@@ -53,6 +59,7 @@ namespace Service.Controllers
         }
 
         [HttpPost]
+        [PublicRoute]
         public bool Logout([FromBody] string token)
         {
             var userLogic = new UserLogic();
@@ -61,11 +68,21 @@ namespace Service.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoles("ADMIN")]
         public List<Users> Filter(string filterUsername)
         {
             var userLogic = new UserLogic();
             var filteredUsers = userLogic.Filter(filterUsername);
             return filteredUsers;
+        }
+
+        [HttpGet]
+        [PublicRoute]
+        public bool ActivateAccount(string token)
+        {
+            var userLogic = new UserLogic();
+            var isActive = userLogic.ActivateAccountEmail(token);
+            return isActive;
         }
     }
 }
