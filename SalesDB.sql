@@ -21,7 +21,9 @@ CREATE TABLE Users (
     username NVARCHAR(50) NOT NULL,  -- Nombre de usuario
     password NVARCHAR(255) NOT NULL, -- Contraseña (encriptada preferiblemente)
     email NVARCHAR(100) NOT NULL,    -- Correo electrónico
-    rol NVARCHAR(50) NOT NULL        -- Rol del usuario
+    rol NVARCHAR(50) NOT NULL,        -- Rol del usuario
+    status INT DEFAULT 0,              -- Estado del usuario (1 = Activo, 0 = Inactivo)
+    loginAttempts INT DEFAULT 0       -- Intentos de inicio de sesión
 );
 
 -- Crear tabla 'logs'
@@ -29,5 +31,5 @@ CREATE TABLE Logs (
     id INT IDENTITY(1,1) PRIMARY KEY, -- Llave primaria con incremento automático
     userModification NVARCHAR(50) NOT NULL, -- Usuario que realizó la modificación
     description NVARCHAR(255) NOT NULL,     -- Descripción del log
-    dateLog DATETIME DEFAULT GETDATE()      -- Fecha y hora del log con valor por defecto
+    dateLog DATETIME DEFAULT GETDATE() NOT NULL     -- Fecha y hora del log con valor por defecto
 );

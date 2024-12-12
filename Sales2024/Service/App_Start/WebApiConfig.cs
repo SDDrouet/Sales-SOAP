@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using Security;
 
 namespace Service
 {
@@ -9,6 +10,9 @@ namespace Service
     {
         public static void Register(HttpConfiguration config)
         {
+            // Agregar el TokenHandler
+            config.MessageHandlers.Add(new TokenHandler());
+
             // Configuración y servicios de Web API
 
             // Rutas de Web API

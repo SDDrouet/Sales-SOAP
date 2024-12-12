@@ -93,7 +93,9 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -121,6 +123,10 @@
       <Project>{494b691b-ab0a-4059-ab6e-d57b029ece51}</Project>
       <Name>Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Security\Security.csproj">
+      <Project>{bda2c634-ef84-47ce-82c3-913ed785add9}</Project>
+      <Name>Security</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SLC\SLC.csproj">
       <Project>{36fe76b2-87fc-4bdd-8085-9f55877b0bc2}</Project>
       <Name>SLC</Name>
@@ -141,7 +147,9 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>53709</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:53709/</IISUrl>
+          <IISUrl>http://localhost:5123/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:5123/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

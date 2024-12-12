@@ -27,5 +27,7 @@ namespace Entities
     
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Products> Products { get; set; }
+        public virtual DbSet<Logs> Logs { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
     }
 }
