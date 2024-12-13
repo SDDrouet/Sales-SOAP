@@ -76,43 +76,64 @@ namespace proxy
         // Métodos para Categories
         public async Task<Categories> CreateCategory(Categories category)
         {
-            return await SendPost<Categories, Categories>("/categories", category);
+            return await SendPost<Categories, Categories>("/Category/CreateCategory", category);
         }
 
-        public async Task<Categories> GetCategory(int id)
+        public async Task<Categories> UpdateCategory(Categories category)
         {
-            return await SendGet<Categories>($"/categories/{id}");
+            return await SendPost<Categories, Categories>("/Category/UpdateCategory", category);
         }
 
-        // Métodos para LoginRequest
-        public async Task<string> Login(LoginRequest loginRequest)
+        public async Task<List<Categories>> GetAllCategories()
         {
-            return await SendPost<string, LoginRequest>("/User/Login", loginRequest);
+            return await SendGet<List<Categories>>("/Category/GetAllCategories");
         }
 
-        // Métodos para Logs
-        public async Task<Logs> CreateLog(Logs log)
+        public async Task<bool> DeleteCategory(int id)
         {
-            return await SendPost<Logs, Logs>("/logs", log);
-        }
-
-        public async Task<Logs> GetLog(int id)
-        {
-            return await SendGet<Logs>($"/logs/{id}");
+            var result = await SendPost<bool, int>("/Category/DeleteCategory", id);
+            return result;
         }
 
         // Métodos para Products
         public async Task<Products> CreateProduct(Products product)
         {
-            return await SendPost<Products, Products>("/products", product);
+            return await SendPost<Products, Products>("/Product/CreateProducts", product);
+        }
+
+        public async Task<Products> UpdateProduct(Products product)
+        {
+            return await SendPost<Products, Products>("/Product/UpdateProduct", product);
+        }
+
+        public async Task<List<Products>> GetAllProducts()
+        {
+            return await SendGet<List<Products>>("/Product/GetAllProducts");
         }
 
         public async Task<Products> GetProduct(int id)
         {
-            return await SendGet<Products>($"/products/{id}");
+            return await SendGet<Products>($"/Product/GetByName{id}");
         }
 
-        // Métodos para Users (Implementación de los métodos faltantes)
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var result = await SendPost<bool, int>("/Product/DeleteProduct", id);
+            return result;
+        }
+
+        // Métodos para Logs
+        public async Task<Logs> CreateLog(Logs log)
+        {
+            return await SendPost<Logs, Logs>("/User/Create", log);
+        }
+
+        public async Task<List<Logs>> GetAllLogs()
+        {
+            return await SendGet<List<Logs>>("/Log/GetAllLogs");
+        }
+
+        // Métodos para Users
         public async Task<Users> CreateUserAsync(Users user)
         {
             return await SendPost<Users, Users>("/User/Create", user);
@@ -125,7 +146,7 @@ namespace proxy
 
         public async Task<List<Users>> GetAllUsersAsync()
         {
-            return await SendGet<List<Users>>("/users");
+            return await SendGet<List<Users>>("/User/Filter");
         }
 
         public async Task<string> LoginUserAsync(LoginRequest loginRequest)
@@ -135,7 +156,6 @@ namespace proxy
 
         public async Task<bool> ChangeUserStatusAsync(int userId)
         {
-            // Suponiendo que hay un endpoint para cambiar el estado del usuario
             var result = await SendPost<bool, int>("/User/ChangeStatus", userId);
             return result;
         }
