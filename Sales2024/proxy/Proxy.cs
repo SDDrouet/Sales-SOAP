@@ -120,7 +120,7 @@ namespace proxy
         // Métodos para Users
         public async Task<Users> CreateUser(Users user)
         {
-            return await SendPost<Users, Users>("/users", user);
+            return await SendPost<Users, Users>("/User/Create", user);
         }
 
         public async Task<Users> GetUser(int id)

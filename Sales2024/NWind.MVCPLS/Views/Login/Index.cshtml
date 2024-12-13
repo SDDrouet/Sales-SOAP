@@ -1,25 +1,60 @@
-﻿
-@{
-    Layout = null;
-}
-
-@model Entities.LoginRequest
+﻿@model Entities.LoginRequest
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
 </head>
 <body>
-    vdfxgdfgdf
-    @using (Html.BeginForm())
+    <h1>Login</h1>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "loginForm" }))
     {
-        <div>Usuario: @Html.TextBoxFor(p => p.Username)</div>
-        <div>Contraseña: @Html.PasswordFor(p => p.Password)</div>
+        <div>
+            Usuario: @Html.TextBoxFor(p => p.Username)
+        </div>
+        <div>
+            Contraseña: @Html.PasswordFor(p => p.Password)
+        </div>
+        <div>
+            <input type="submit" value="Iniciar Sesión" />
+        </div>
+        <div>
+            <button onclick="location.href='/Login/CreateUser'">Crear Usuario</button>
+        </div>
 
-        <div><input type="submit" name="login" value="Inciar Sesión" /></div>
     }
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevenir el envío tradicional del formulario
+
+            // Obtén los datos del formulario
+            const formData = new FormData(event.target);
+            const loginRequest = {
+                Username: formData.get('Username'),
+                Password: formData.get('Password')
+            };
+
+            // Realiza la solicitud al controlador
+            const response = await fetch('/Login/Index', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginRequest)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Guarda el token en sessionStorage
+                sessionStorage.setItem('authToken', result.token);
+                window.location.href = result.redirectUrl;
+            } else {
+                alert('Error al iniciar sesión: ' + result.message);
+            }
+        });
+    </script>
 </body>
 </html>

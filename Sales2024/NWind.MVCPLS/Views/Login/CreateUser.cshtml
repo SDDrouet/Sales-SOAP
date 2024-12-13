@@ -1,0 +1,68 @@
+﻿@model Entities.Users
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Usuario</title>
+</head>
+<body>
+    <h1>Crear Usuario</h1>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "createUserForm" }))
+    {
+        <div>
+            <label>Usuario:</label>
+            @Html.TextBoxFor(m => m.username, new { required = "required" })
+        </div>
+        <div>
+            <label>Email:</label>
+            @Html.TextBoxFor(m => m.email, new { type = "email", required = "required", pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$" })
+        </div>
+        <div>
+            <label>Contraseña:</label>
+            @Html.PasswordFor(m => m.password, new { required = "required", minlength = "6" })
+        </div>
+        <div>
+            <label>Confirmar Contraseña:</label>
+            <input type="password" id="confirmPassword" required minlength="6" />
+        </div>
+        <button type="submit">Crear Usuario</button>
+    }
+
+<script>
+    document.getElementById('createUserForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const user = {
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+
+        // Validar contraseñas en el cliente
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        if (user.password !== confirmPassword) {
+            alert('Las contraseñas no coinciden.');
+            return;
+        }
+
+        // Enviar datos al controlador
+        const response = await fetch('/Login/CreateUser', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert('Usuario creado con éxito');
+            // Redirigir a la URL de la respuesta JSON
+            window.location.href = result.redirectUrl;
+        } else {
+            alert('Error: ' + result.message);
+        }
+    });
+</script>
+</body>
+</html>
