@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Entities;
+using proxy.Services;
 using Newtonsoft.Json;
-using Entities; // Asegúrate de que esta referencia es correcta
-using NWindProxyService.Services;
 
-namespace NWindProxyService
+
+namespace proxy
 {
     public class Proxy : IService
     {
@@ -72,6 +75,8 @@ namespace NWindProxyService
             return result;
         }
 
+
+
         // Métodos para Categories
         public async Task<Categories> CreateCategory(Categories category)
         {
@@ -84,10 +89,11 @@ namespace NWindProxyService
         }
 
         // Métodos para LoginRequest
-        public async Task<LoginRequest> Login(LoginRequest loginRequest)
+        public async Task<string> Login(LoginRequest loginRequest)
         {
-            return await SendPost<LoginRequest, LoginRequest>("/login", loginRequest);
+            return await SendPost<string, LoginRequest>("/User/Login", loginRequest);
         }
+
 
         // Métodos para Logs
         public async Task<Logs> CreateLog(Logs log)
