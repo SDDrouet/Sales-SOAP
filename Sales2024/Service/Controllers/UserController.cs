@@ -32,7 +32,7 @@ namespace Service.Controllers
         }
 
         [HttpPut]
-        [AuthorizeRoles("ADMIN", "EDITOR", "VIEWER")]
+        [AuthorizeRoles("ADMIN")]
         public bool Update(Users userToUpdate)
         {
             var userLogic = new UserLogic();

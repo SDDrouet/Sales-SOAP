@@ -5,8 +5,218 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Gestionar Productos</title>
+    <style>
+        /* Reset de márgenes y padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* Contenedor principal */
+        div {
+            margin: 20px 0;
+        }
+
+        /* Estilos de encabezados */
+        h1, h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Estilo para formularios */
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+            form div {
+                margin-bottom: 15px;
+            }
+
+            form label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            form input, form select, form button {
+                width: 100%;
+                padding: 10px;
+                font-size: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            form button {
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+
+                form button:hover {
+                    background-color: #0056b3;
+                }
+
+        /* Estilo para botones */
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        /* Estilo para las tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Navegación */
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+            nav ul li {
+                display: inline;
+                margin-right: 20px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: #007bff;
+                    font-weight: bold;
+                }
+
+                    nav ul li a:hover {
+                        text-decoration: underline;
+                    }
+
+        /* Mensajes de éxito / error */
+        p.success, p.error {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        p.success {
+            color: green;
+        }
+
+        p.error {
+            color: red;
+        }
+
+        /* Estilo para el centro de la página (verificación) */
+        div[style="text-align: center; margin-top: 50px;"] {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        /* Botón de cierre de sesión */
+        #logoutButton, #homebtn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+            #logoutButton:hover, #homebtn:hover {
+                background-color: #d32f2f;
+            }
+
+        /* Ajustes para formularios con estilos condicionales */
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Ajustes para el login */
+        #loginForm input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+            #loginForm input[type="submit"]:hover {
+                background-color: #218838;
+            }
+
+        #loginForm div {
+            margin-bottom: 15px;
+        }
+
+        #loginForm input {
+            width: 100%;
+            padding: 10px;
+        }
+
+        /* Estilos para el formulario de actualización de usuario */
+        #updateUserForm {
+            display: none;
+        }
+
+        /* Estilo de enlace */
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+    </style>
 </head>
 <body>
+    <!-- Botón para cerrar sesión -->
+    <button id="homebtn">Regresar a Inicio</button>
+
     <h1>Gestionar Productos</h1>
 
     <!-- Crear nuevo producto -->
@@ -114,6 +324,14 @@
     <script>
         const authToken = sessionStorage.getItem('authToken');
 
+        function sessionControl() {
+            if (authToken == null || authToken == "") {
+                window.location.href = '/';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', sessionControl);
+
         async function sendRequest(url, method, data = null) {
             const headers = {
                 'Content-Type': 'application/json',
@@ -146,16 +364,16 @@
             products.forEach(product => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                        <td>${product.id}</td>
-                        <td>${product.productName}</td>
-                        <td>${product.categoryId}</td>
-                        <td>${product.unitPrice}</td>
-                        <td>${product.unitInStock}</td>
-                        <td>
-                            <button onclick="fillUpdateForm(${product.id}, '${product.productName}', ${product.categoryId}, ${product.unitPrice}, ${product.unitInStock})">Actualizar</button>
-                            <button onclick="deleteProduct(${product.id})">Eliminar</button>
-                        </td>
-                    `;
+                            <td>${product.id}</td>
+                            <td>${product.productName}</td>
+                            <td>${product.categoryId}</td>
+                            <td>${product.unitPrice}</td>
+                            <td>${product.unitInStock}</td>
+                            <td>
+                                <button onclick="fillUpdateForm(${product.id}, '${product.productName}', ${product.categoryId}, ${product.unitPrice}, ${product.unitInStock})">Actualizar</button>
+                                <button onclick="deleteProduct(${product.id})">Eliminar</button>
+                            </td>
+                        `;
                 tbody.appendChild(tr);
             });
         }
@@ -192,7 +410,6 @@
             if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
                 const result = await sendRequest('/Product/DeleteProduct', 'POST', { id: id });
                 if (result) {
-                    alert('Producto eliminado');
                     location.reload();
                 }
             }
@@ -225,6 +442,13 @@
                 location.reload();
             }
         }
+
+        function backHome() {
+            window.location.href = '/Home/Home';
+        }
+
+        // Agregar el evento al botón de cerrar sesión
+        document.getElementById('homebtn').addEventListener('click', backHome);
 
         document.addEventListener('DOMContentLoaded', fetchProducts);
     </script>

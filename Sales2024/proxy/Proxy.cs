@@ -178,7 +178,7 @@ namespace proxy
 
         public async Task<bool> DeleteProduct(int id)
         {
-            var result = await SendDelete<bool>($"/Product/DeleteProduct/{id}");
+            var result = await SendDelete<bool>($"/Product/Delete/{id}");
             return result;
         }
 
@@ -202,7 +202,7 @@ namespace proxy
 
         public async Task<List<Users>> GetAllUsersAsync()
         {
-            return await SendGet<List<Users>>("/User/Filter");
+            return await SendGet<List<Users>>("/User/Filter?filterUsername=");
         }
 
         public async Task<string> LoginUserAsync(LoginRequest loginRequest)
@@ -212,7 +212,7 @@ namespace proxy
 
         public async Task<bool> ChangeUserStatusAsync(int userId)
         {
-            var result = await SendPost<bool, int>("/User/ChangeStatus", userId);
+            var result = await SendPut<bool, int>($"/User/ChangeStatus/{userId}", userId);
             return result;
         }
     }

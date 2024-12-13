@@ -1,9 +1,10 @@
-﻿@model List<Entities.Categories>
+﻿@model List<Entities.Users>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    <title>Gestionar Usuarios</title>
     <style>
         /* Reset de márgenes y padding */
         * {
@@ -216,71 +217,102 @@
     <!-- Botón para cerrar sesión -->
     <button id="homebtn">Regresar a Inicio</button>
 
-    <h1>Gestionar Categorías</h1>
+    <h1>Gestionar Usuarios</h1>
 
-    <!-- Crear nueva categoría -->
-    <h2>Crear Nueva Categoría</h2>
-    <form id="createCategoryForm">
+    <!-- Crear nuevo usuario -->
+    <h2>Crear Nuevo Usuario</h2>
+    <form id="createUserForm">
         <div>
-            <label>Nombre de la Categoría:</label>
-            <input type="text" id="categoryName" required />
-            <link rel="stylesheet" href="~/Views/estilo/style.css" />
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="username" required />
         </div>
 
         <div>
-            <label>Descripción:</label>
-            <textarea id="description" required></textarea>
+            <label>Contraseña:</label>
+            <input type="password" id="password" required />
         </div>
 
-        <button type="submit">Crear Categoría</button>
+        <div>
+            <label>Email:</label>
+            <input type="email" id="email" required />
+        </div>
+
+        <div>
+            <label for="rol">Rol:</label>
+            <select id="rol" required>
+                <option value="ADMIN">ADMIN</option>
+                <option value="EDITOR">EDITOR</option>
+                <option value="VIEWER">VIEWER</option>
+            </select>
+        </div>
+
+        <button type="submit">Crear Usuario</button>
     </form>
 
     <hr />
 
-    <!-- Actualizar categoría -->
-    <h2>Actualizar Categoría</h2>
-    <form id="updateCategoryForm" style="display:none;">
+    <!-- Actualizar usuario -->
+    <h2>Actualizar Usuario</h2>
+    <form id="updateUserForm" style="display:none;">
         <div>
-            <label>Nombre de la Categoría:</label>
-            <input type="text" id="updateCategoryName" required />
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="updateUsername" required />
         </div>
 
         <div>
-            <label>Descripción:</label>
-            <textarea id="updateDescription" required></textarea>
+            <label>Email:</label>
+            <input type="email" id="updateEmail" required />
         </div>
 
-        <button type="submit">Actualizar Categoría</button>
+        <div>
+            <label for="rol">Rol:</label>
+            <select id="updateRol" required>
+                <option value="ADMIN">ADMIN</option>
+                <option value="EDITOR">EDITOR</option>
+                <option value="VIEWER">VIEWER</option>
+            </select>
+        </div>
+
+        <button type="submit">Actualizar Usuario</button>
     </form>
 
     <hr />
 
-    <!-- Listar categorías -->
-    <h2>Lista de Categorías</h2>
+    <!-- Listar usuarios -->
+    <h2>Lista de Usuarios</h2>
     <table>
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
+                <th>Nombre de Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             @if (Model != null && Model.Count > 0)
             {
-                foreach (var category in Model)
+                foreach (var user in Model)
                 {
                     <tr>
-                        <td>@category.id</td>
-                        <td>@category.categoryName</td>
-                        <td>@category.description</td>
+                        <td>@user.id</td>
+                        <td>@user.username</td>
+                        <td>@user.email</td>
+                        <td>@user.rol</td>
+                        <td>@(user.status == 1 ? "Activo" : "Inactivo")</td>
                         <td>
-                            <!-- Editar categoría -->
-                            <button onclick="updateCategory(@category.id)">Actualizar</button>
+                            <!-- Editar usuario -->
+                            <button onclick="fillUpdateForm(@user.id, '@user.username', '@user.email', '@user.rol')">Actualizar</button>
 
-                            <!-- Eliminar categoría -->
-                            <button onclick="deleteCategory(@category.id)">Eliminar</button>
+                            <!-- Cambiar estado del usuario -->
+                            <button onclick="toggleStatus(@user.id, @(user.status == 1 ? 0 : 1))">
+                                @(user.status == 1 ? "Desactivar" : "Activar")
+                            </button>
+
+                            <!-- Eliminar usuario -->
+                            <button onclick="deleteUser(@user.id)">Eliminar</button>
                         </td>
                     </tr>
                 }
@@ -288,7 +320,7 @@
             else
             {
                 <tr>
-                    <td colspan="4">No hay categorías disponibles</td>
+                    <td colspan="6">No hay usuarios disponibles</td>
                 </tr>
             }
 
@@ -298,7 +330,6 @@
     <hr />
 
     <script>
-        // Verificar que el token esté presente
         const authToken = sessionStorage.getItem('authToken');
 
         function sessionControl() {
@@ -309,7 +340,6 @@
 
         document.addEventListener('DOMContentLoaded', sessionControl);
 
-        // Función para enviar solicitudes con el token Bearer en el encabezado
         async function sendRequest(url, method, data = null) {
             const headers = {
                 'Content-Type': 'application/json',
@@ -318,11 +348,11 @@
 
             const options = {
                 method: method,
-                headers: headers,
+                headers: headers
             };
 
             if (data) {
-                options.body = JSON.stringify(data); // Si hay datos, los enviamos en el cuerpo de la solicitud
+                options.body = JSON.stringify(data);
             }
 
             try {
@@ -330,8 +360,7 @@
                 if (!response.ok) {
                     throw new Error('Error al realizar la solicitud');
                 }
-                const result = await response.json();
-                return result;
+                return await response.json();
             } catch (error) {
                 console.error('Error al realizar la solicitud:', error);
                 alert(error.message);
@@ -339,120 +368,97 @@
             }
         }
 
-        function updateCategoriesList(categories) {
-            const tbody = document.querySelector('tbody');
-            tbody.innerHTML = ''; // Limpiar cualquier contenido previo
+        async function fetchUsers() {
+            const users = await sendRequest('/User/GetAllUsers', 'GET');
+            if (users) {
+                updateUsersList(users);
+            }
+        }
 
-            categories.forEach(category => {
+        function updateUsersList(users) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${category.id}</td>
-                    <td>${category.categoryName}</td>
-                    <td>${category.description}</td>
-                    <td>
-                        <button onclick="fillUpdateForm(${category.id}, '${category.categoryName}', '${category.description}')">Actualizar</button>
-                        <button onclick="deleteCategory(${category.id})">Eliminar</button>
-                    </td>
-                `;
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${user.rol}</td>
+                        <td>${user.status === 1 ? 'Activo' : 'Inactivo'}</td>
+                        <td>
+                            <button onclick="fillUpdateForm(${user.id}, '${user.username}', '${user.email}', '${user.rol}')">Actualizar</button>
+                            <button onclick="toggleStatus(${user.id}, ${user.status === 1 ? 0 : 1})">${user.status === 1 ? 'Desactivar' : 'Activar'}</button>
+                        </td>
+                    `;
                 tbody.appendChild(tr);
             });
         }
 
-        async function fetchCategories() {
-            const authToken = sessionStorage.getItem('authToken');
-
-            if (!authToken) {
-                alert("No se encontró el token de autenticación.");
-                return;
-            }
-
-            const headers = {
-                'Authorization': `Bearer ${authToken}`, // Agrega el token al encabezado Authorization
-            };
-
-            try {
-                const response = await fetch('/Category/GetAllCategories', { method: 'GET', headers: headers });
-
-                if (!response.ok) {
-                    throw new Error('Error al obtener las categorías.');
-                }
-
-                const categories = await response.json(); // Asumiendo que el servidor devuelve las categorías en formato JSON
-
-                console.log(categories);
-
-                if (categories) {
-                    updateCategoriesList(categories);
-                } else {
-                    alert(categories.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
-            }
-        }
-
-
-        // Función para crear categoría
-        async function createCategory(category) {
-            const result = await sendRequest('/Category/CreateCategory', 'POST', category);
+        async function createUser(user) {
+            const result = await sendRequest('/User/CreateUser', 'POST', user);
             if (result) {
-                alert('Categoría creada exitosamente');
-                location.reload(); // Recargar la página para actualizar la lista
+                alert('Usuario creado exitosamente');
+                location.reload();
             }
         }
 
-        // Evento para el formulario de crear categoría
-        document.getElementById('createCategoryForm').addEventListener('submit', function (e) {
+        async function deleteUser(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+                const result = await sendRequest('/User/DeleteUser', 'POST', { id: id });
+                if (result) {
+                    alert('Usuario eliminado');
+                    location.reload();
+                }
+            }
+        }
+
+        function fillUpdateForm(id, username, email, rol) {
+            document.getElementById('updateUserForm').style.display = 'block';
+            document.getElementById('updateUsername').value = username;
+            document.getElementById('updateEmail').value = email;
+            document.getElementById('updateRol').value = rol;
+            document.getElementById('updateUserForm').onsubmit = function (e) {
+                e.preventDefault();
+                updateUser(id);
+            };
+        }
+
+        async function updateUser(id) {
+            const user = {
+                id: id,
+                username: document.getElementById('updateUsername').value,
+                email: document.getElementById('updateEmail').value,
+                rol: document.getElementById('updateRol').value
+            };
+            const result = await sendRequest('/User/UpdateUser', 'POST', user);
+            if (result) {
+                alert('Usuario actualizado exitosamente');
+                location.reload();
+            }
+        }
+
+        async function toggleStatus(id, status) {
+            const result = await sendRequest('/User/ChangeUserStatus', 'POST', { userid: id });
+            if (result) {
+                alert('Estado del usuario actualizado');
+                location.reload();
+            }
+        }
+
+        document.getElementById('createUserForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const category = {
-                categoryName: document.getElementById('categoryName').value,
-                description: document.getElementById('description').value
+            const user = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                email: document.getElementById('email').value,
+                rol: document.getElementById('rol').value
             };
 
-            createCategory(category);
+            createUser(user);
         });
-
-        // Función para eliminar categoría
-        async function deleteCategory(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
-                const result = await sendRequest('/Category/DeleteCategory', 'POST', { id: id });
-                if (result) {
-                    alert('Categoría eliminada');
-                    location.reload(); // Recargar la página para actualizar la lista
-                }
-            }
-        }
-
-
-
-        // Función para llenar el formulario de actualización
-        function fillUpdateForm(id, categoryName, description) {
-            document.getElementById('updateCategoryForm').style.display = 'block';
-            document.getElementById('updateCategoryName').value = categoryName;
-            document.getElementById('updateDescription').value = description;
-            document.getElementById('updateCategoryForm').onsubmit = function (e) {
-                e.preventDefault();
-                updateCategory(id);
-            };
-        }
-
-        // Función para actualizar categoría
-        async function updateCategory(id) {
-            const category = {
-                id: id,
-                categoryName: document.getElementById('updateCategoryName').value,
-                description: document.getElementById('updateDescription').value
-            };
-            const result = await sendRequest('/Category/UpdateCategory', 'POST', category);
-            if (result.success) {
-                alert('Categoría actualizada exitosamente');
-                location.reload(); // Recargar la página para actualizar la lista
-            } else {
-                alert(result.message);
-            }
-        }
 
         function backHome() {
             window.location.href = '/Home/Home';
@@ -461,9 +467,7 @@
         // Agregar el evento al botón de cerrar sesión
         document.getElementById('homebtn').addEventListener('click', backHome);
 
-        // Llamar a la función fetchCategories cuando el DOM esté completamente cargado
-        document.addEventListener('DOMContentLoaded', fetchCategories);
+        document.addEventListener('DOMContentLoaded', fetchUsers);
     </script>
-
 </body>
 </html>
