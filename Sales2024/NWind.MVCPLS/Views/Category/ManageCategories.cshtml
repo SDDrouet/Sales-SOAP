@@ -27,6 +27,24 @@
 
     <hr />
 
+    <!-- Actualizar categoría -->
+    <h2>Actualizar Categoría</h2>
+    <form id="updateCategoryForm" style="display:none;">
+        <div>
+            <label>Nombre de la Categoría:</label>
+            <input type="text" id="updateCategoryName" required />
+        </div>
+
+        <div>
+            <label>Descripción:</label>
+            <textarea id="updateDescription" required></textarea>
+        </div>
+
+        <button type="submit">Actualizar Categoría</button>
+    </form>
+
+    <hr />
+
     <!-- Listar categorías -->
     <h2>Lista de Categorías</h2>
     <table>
@@ -111,14 +129,14 @@
             categories.forEach(category => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-            <td>${category.id}</td>
-            <td>${category.categoryName}</td>
-            <td>${category.description}</td>
-            <td>
-                <button onclick="updateCategory(${category.id})">Actualizar</button>
-                <button onclick="deleteCategory(${category.id})">Eliminar</button>
-            </td>
-        `;
+                <td>${category.id}</td>
+                <td>${category.categoryName}</td>
+                <td>${category.description}</td>
+                <td>
+                    <button onclick="fillUpdateForm(${category.id}, '${category.categoryName}', '${category.description}')">Actualizar</button>
+                    <button onclick="deleteCategory(${category.id})">Eliminar</button>
+                </td>
+            `;
                 tbody.appendChild(tr);
             });
         }
@@ -187,6 +205,35 @@
                     alert('Categoría eliminada');
                     location.reload(); // Recargar la página para actualizar la lista
                 }
+            }
+        }
+
+
+
+        // Función para llenar el formulario de actualización
+        function fillUpdateForm(id, categoryName, description) {
+            document.getElementById('updateCategoryForm').style.display = 'block';
+            document.getElementById('updateCategoryName').value = categoryName;
+            document.getElementById('updateDescription').value = description;
+            document.getElementById('updateCategoryForm').onsubmit = function (e) {
+                e.preventDefault();
+                updateCategory(id);
+            };
+        }
+
+        // Función para actualizar categoría
+        async function updateCategory(id) {
+            const category = {
+                id: id,
+                categoryName: document.getElementById('updateCategoryName').value,
+                description: document.getElementById('updateDescription').value
+            };
+            const result = await sendRequest('/Category/UpdateCategory', 'POST', category);
+            if (result.success) {
+                alert('Categoría actualizada exitosamente');
+                location.reload(); // Recargar la página para actualizar la lista
+            } else {
+                alert(result.message);
             }
         }
 

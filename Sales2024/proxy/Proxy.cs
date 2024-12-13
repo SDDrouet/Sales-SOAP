@@ -73,15 +73,79 @@ namespace proxy
             return result;
         }
 
+        private async Task<T> SendPut<T, PutData>(string requestURI, PutData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            T result = default(T);
+            try
+            {
+                requestURI = BaseAddress + requestURI;
+                _httpClient.DefaultRequestHeaders.Accept.Clear();
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var jsonData = JsonConvert.SerializeObject(data);
+                HttpResponseMessage response = await _httpClient.PutAsync(requestURI, new StringContent(jsonData, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var resultWebAPI = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<T>(resultWebAPI);
+                }
+                else
+                {
+                    throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return result;
+        }
+
+        private async Task<T> SendDelete<T>(string requestURI)
+        {
+            T result = default(T);
+            try
+            {
+                requestURI = BaseAddress + requestURI;
+                _httpClient.DefaultRequestHeaders.Accept.Clear();
+                _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await _httpClient.DeleteAsync(requestURI);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var resultWebAPI = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<T>(resultWebAPI);
+                }
+                else
+                {
+                    throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return result;
+        }
+
+
+
         // Métodos para Categories
         public async Task<Categories> CreateCategory(Categories category)
         {
             return await SendPost<Categories, Categories>("/Category/CreateCategory", category);
         }
 
-        public async Task<Categories> UpdateCategory(Categories category)
+        public async Task<bool> UpdateCategory(Categories category)
         {
-            return await SendPost<Categories, Categories>("/Category/UpdateCategory", category);
+            return await SendPut<bool, Categories>("/Category/UpdateCategory", category);
         }
 
         public async Task<List<Categories>> GetAllCategories()
@@ -91,9 +155,10 @@ namespace proxy
 
         public async Task<bool> DeleteCategory(int id)
         {
-            var result = await SendPost<bool, int>("/Category/DeleteCategory", id);
+            var result = await SendDelete<bool>($"/Category/DeleteCategory/{id}");
             return result;
         }
+
 
         // Métodos para Products
         public async Task<Products> CreateProduct(Products product)

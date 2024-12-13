@@ -9,7 +9,7 @@ namespace proxy.Services
     {
         // Métodos para Categories
         Task<Categories> CreateCategory(Categories category);
-        Task<Categories> UpdateCategory(Categories category);
+        Task<bool> UpdateCategory(Categories category);
         Task<List<Categories>> GetAllCategories();
         Task<bool> DeleteCategory(int id);
 
