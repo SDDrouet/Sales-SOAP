@@ -15,18 +15,16 @@ namespace proxy.Services
 
         // Métodos para Products
         Task<Products> CreateProduct(Products product);
-        Task<Products> UpdateProduct(Products product);
+        Task<bool> UpdateProduct(Products product);
         Task<List<Products>> GetAllProducts();
-        Task<Products> GetProduct(int id);
         Task<bool> DeleteProduct(int id);
 
         // Métodos para Logs
-        Task<Logs> CreateLog(Logs log);
         Task<List<Logs>> GetAllLogs();
 
         // Métodos para Users
         Task<Users> CreateUserAsync(Users user);
-        Task<Users> UpdateUserAsync(Users user);
+        Task<bool> UpdateUserAsync(Users user);
         Task<List<Users>> GetAllUsersAsync();
         Task<string> LoginUserAsync(LoginRequest loginRequest);
         Task<bool> ChangeUserStatusAsync(int userId);

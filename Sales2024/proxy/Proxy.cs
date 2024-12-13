@@ -166,33 +166,24 @@ namespace proxy
             return await SendPost<Products, Products>("/Product/CreateProducts", product);
         }
 
-        public async Task<Products> UpdateProduct(Products product)
+        public async Task<bool> UpdateProduct(Products product)
         {
-            return await SendPost<Products, Products>("/Product/UpdateProduct", product);
+            return await SendPut<bool, Products>("/Product/UpdateProduct", product);
         }
 
         public async Task<List<Products>> GetAllProducts()
         {
-            return await SendGet<List<Products>>("/Product/GetAllProducts");
-        }
-
-        public async Task<Products> GetProduct(int id)
-        {
-            return await SendGet<Products>($"/Product/GetByName{id}");
+            return await SendGet<List<Products>>("/Product/GetByName?filterName=");
         }
 
         public async Task<bool> DeleteProduct(int id)
         {
-            var result = await SendPost<bool, int>("/Product/DeleteProduct", id);
+            var result = await SendDelete<bool>($"/Product/DeleteProduct/{id}");
             return result;
         }
 
-        // Métodos para Logs
-        public async Task<Logs> CreateLog(Logs log)
-        {
-            return await SendPost<Logs, Logs>("/User/Create", log);
-        }
 
+        // Métodos para Logs
         public async Task<List<Logs>> GetAllLogs()
         {
             return await SendGet<List<Logs>>("/Log/GetAllLogs");
@@ -204,9 +195,9 @@ namespace proxy
             return await SendPost<Users, Users>("/User/Create", user);
         }
 
-        public async Task<Users> UpdateUserAsync(Users user)
+        public async Task<bool> UpdateUserAsync(Users user)
         {
-            return await SendPost<Users, Users>("/User/Update", user);
+            return await SendPut<bool, Users>("/User/Update", user);
         }
 
         public async Task<List<Users>> GetAllUsersAsync()

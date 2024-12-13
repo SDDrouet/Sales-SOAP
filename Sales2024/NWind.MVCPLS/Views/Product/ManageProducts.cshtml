@@ -1,0 +1,233 @@
+﻿@model List<Entities.Products>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Gestionar Productos</title>
+</head>
+<body>
+    <h1>Gestionar Productos</h1>
+
+    <!-- Crear nuevo producto -->
+    <h2>Crear Nuevo Producto</h2>
+    <form id="createProductForm">
+        <div>
+            <label>Nombre del Producto:</label>
+            <input type="text" id="productName" required />
+        </div>
+
+        <div>
+            <label>Categoría (ID):</label>
+            <input type="number" id="categoryId" required />
+        </div>
+
+        <div>
+            <label>Precio Unitario:</label>
+            <input type="number" id="unitPrice" step="0.01" required />
+        </div>
+
+        <div>
+            <label>Unidades en Stock:</label>
+            <input type="number" id="unitInStock" required />
+        </div>
+
+        <button type="submit">Crear Producto</button>
+    </form>
+
+    <hr />
+
+    <!-- Actualizar producto -->
+    <h2>Actualizar Producto</h2>
+    <form id="updateProductForm" style="display:none;">
+        <div>
+            <label>Nombre del Producto:</label>
+            <input type="text" id="updateProductName" required />
+        </div>
+
+        <div>
+            <label>Categoría (ID):</label>
+            <input type="number" id="updateCategoryId" required />
+        </div>
+
+        <div>
+            <label>Precio Unitario:</label>
+            <input type="number" id="updateUnitPrice" step="0.01" required />
+        </div>
+
+        <div>
+            <label>Unidades en Stock:</label>
+            <input type="number" id="updateUnitInStock" required />
+        </div>
+
+        <button type="submit">Actualizar Producto</button>
+    </form>
+
+    <hr />
+
+    <!-- Listar productos -->
+    <h2>Lista de Productos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio Unitario</th>
+                <th>Unidades en Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.id</td>
+                        <td>@product.productName</td>
+                        <td>@product.categoryId</td>
+                        <td>@product.unitPrice</td>
+                        <td>@product.unitInStock</td>
+                        <td>
+                            <!-- Editar producto -->
+                            <button onclick="fillUpdateForm(@product.id, '@product.productName', @product.categoryId, @product.unitPrice, @product.unitInStock)">Actualizar</button>
+
+                            <!-- Eliminar producto -->
+                            <button onclick="deleteProduct(@product.id)">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">No hay productos disponibles</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <hr />
+
+    <script>
+        const authToken = sessionStorage.getItem('authToken');
+
+        async function sendRequest(url, method, data = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': authToken ? 'Bearer ' + authToken : ''
+            };
+
+            const options = { method: method, headers: headers };
+
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error('Error al realizar la solicitud');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+                return null;
+            }
+        }
+
+        function updateProductsList(products) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            products.forEach(product => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.productName}</td>
+                        <td>${product.categoryId}</td>
+                        <td>${product.unitPrice}</td>
+                        <td>${product.unitInStock}</td>
+                        <td>
+                            <button onclick="fillUpdateForm(${product.id}, '${product.productName}', ${product.categoryId}, ${product.unitPrice}, ${product.unitInStock})">Actualizar</button>
+                            <button onclick="deleteProduct(${product.id})">Eliminar</button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function fetchProducts() {
+            const result = await sendRequest('/Product/GetAllProducts', 'GET');
+            if (result) {
+                updateProductsList(result);
+            }
+        }
+
+        async function createProduct(product) {
+            const result = await sendRequest('/Product/CreateProduct', 'POST', product);
+            if (result) {
+                alert('Producto creado exitosamente');
+                location.reload();
+            }
+        }
+
+        document.getElementById('createProductForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const product = {
+                productName: document.getElementById('productName').value,
+                categoryId: parseInt(document.getElementById('categoryId').value),
+                unitPrice: parseFloat(document.getElementById('unitPrice').value),
+                unitInStock: parseInt(document.getElementById('unitInStock').value)
+            };
+
+            createProduct(product);
+        });
+
+        async function deleteProduct(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                const result = await sendRequest('/Product/DeleteProduct', 'POST', { id: id });
+                if (result) {
+                    alert('Producto eliminado');
+                    location.reload();
+                }
+            }
+        }
+
+        function fillUpdateForm(id, productName, categoryId, unitPrice, unitInStock) {
+            document.getElementById('updateProductForm').style.display = 'block';
+            document.getElementById('updateProductName').value = productName;
+            document.getElementById('updateCategoryId').value = categoryId;
+            document.getElementById('updateUnitPrice').value = unitPrice;
+            document.getElementById('updateUnitInStock').value = unitInStock;
+            document.getElementById('updateProductForm').onsubmit = function (e) {
+                e.preventDefault();
+                updateProduct(id);
+            };
+        }
+
+        async function updateProduct(id) {
+            const product = {
+                id: id,
+                productName: document.getElementById('updateProductName').value,
+                categoryId: parseInt(document.getElementById('updateCategoryId').value),
+                unitPrice: parseFloat(document.getElementById('updateUnitPrice').value),
+                unitInStock: parseInt(document.getElementById('updateUnitInStock').value)
+            };
+
+            const result = await sendRequest('/Product/UpdateProduct', 'POST', product);
+            if (result) {
+                alert('Producto actualizado exitosamente');
+                location.reload();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+    </script>
+
+</body>
+</html>
