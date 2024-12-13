@@ -57,11 +57,9 @@ namespace NWind.MVCPLS.Controllers
         {
             try
             {
-                var proxy = new Proxy();
-
                 user.rol = "VIEWER"; // Asegúrate de que el rol sea siempre "VIEWER"
 
-                var createdUser = await proxy.CreateUser(user);
+                var createdUser = await _proxy.CreateUserAsync(user);
 
                 if (createdUser != null)
                 {

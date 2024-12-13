@@ -1,18 +1,28 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>home</title>
+    <title>Home</title>
 </head>
 <body>
     <div>
-        contenido de la vista home
+        <h1>Bienvenido a la Aplicación</h1>
+
+        <!-- Menú de navegación -->
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("ManageCategories", "Category")">Crear Categoría</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenido de la vista home -->
+        <div>
+            <p>Contenido principal de la vista Home</p>
+        </div>
     </div>
 </body>
 </html>

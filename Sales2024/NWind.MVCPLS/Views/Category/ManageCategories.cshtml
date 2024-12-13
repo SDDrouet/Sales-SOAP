@@ -1,0 +1,198 @@
+﻿@model List<Entities.Categories>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Gestionar Categorías</title>
+</head>
+<body>
+    <h1>Gestionar Categorías</h1>
+
+    <!-- Crear nueva categoría -->
+    <h2>Crear Nueva Categoría</h2>
+    <form id="createCategoryForm">
+        <div>
+            <label>Nombre de la Categoría:</label>
+            <input type="text" id="categoryName" required />
+        </div>
+
+        <div>
+            <label>Descripción:</label>
+            <textarea id="description" required></textarea>
+        </div>
+
+        <button type="submit">Crear Categoría</button>
+    </form>
+
+    <hr />
+
+    <!-- Listar categorías -->
+    <h2>Lista de Categorías</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                foreach (var category in Model)
+                {
+                    <tr>
+                        <td>@category.id</td>
+                        <td>@category.categoryName</td>
+                        <td>@category.description</td>
+                        <td>
+                            <!-- Editar categoría -->
+                            <button onclick="updateCategory(@category.id)">Actualizar</button>
+
+                            <!-- Eliminar categoría -->
+                            <button onclick="deleteCategory(@category.id)">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">No hay categorías disponibles</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <hr />
+
+    <script>
+        // Verificar que el token esté presente
+        const authToken = sessionStorage.getItem('authToken');
+        console.log(authToken);  // Esto debería mostrar el token si está presente
+
+        // Función para enviar solicitudes con el token Bearer en el encabezado
+        async function sendRequest(url, method, data = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': authToken ? 'Bearer ' + authToken : ''
+            };
+
+            const options = {
+                method: method,
+                headers: headers,
+            };
+
+            if (data) {
+                options.body = JSON.stringify(data); // Si hay datos, los enviamos en el cuerpo de la solicitud
+            }
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error('Error al realizar la solicitud');
+                }
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error al realizar la solicitud:', error);
+                alert(error.message);
+                return null;
+            }
+        }
+
+        function updateCategoriesList(categories) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Limpiar cualquier contenido previo
+
+            categories.forEach(category => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td>${category.id}</td>
+            <td>${category.categoryName}</td>
+            <td>${category.description}</td>
+            <td>
+                <button onclick="updateCategory(${category.id})">Actualizar</button>
+                <button onclick="deleteCategory(${category.id})">Eliminar</button>
+            </td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function fetchCategories() {
+            const authToken = sessionStorage.getItem('authToken');
+
+            if (!authToken) {
+                alert("No se encontró el token de autenticación.");
+                return;
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${authToken}`, // Agrega el token al encabezado Authorization
+            };
+
+            try {
+                const response = await fetch('/Category/GetAllCategories', { method: 'GET', headers: headers });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener las categorías.');
+                }
+
+                const categories = await response.json(); // Asumiendo que el servidor devuelve las categorías en formato JSON
+
+                console.log(categories);
+
+                if (categories) {
+                    updateCategoriesList(categories);
+                } else {
+                    alert(categories.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+
+        // Función para crear categoría
+        async function createCategory(category) {
+            const result = await sendRequest('/Category/CreateCategory', 'POST', category);
+            if (result) {
+                alert('Categoría creada exitosamente');
+                location.reload(); // Recargar la página para actualizar la lista
+            }
+        }
+
+        // Evento para el formulario de crear categoría
+        document.getElementById('createCategoryForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const category = {
+                categoryName: document.getElementById('categoryName').value,
+                description: document.getElementById('description').value
+            };
+
+            createCategory(category);
+        });
+
+        // Función para eliminar categoría
+        async function deleteCategory(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta categoría?')) {
+                const result = await sendRequest('/Category/DeleteCategory', 'POST', { id: id });
+                if (result) {
+                    alert('Categoría eliminada');
+                    location.reload(); // Recargar la página para actualizar la lista
+                }
+            }
+        }
+
+        // Llamar a la función fetchCategories cuando el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+    </script>
+
+</body>
+</html>
