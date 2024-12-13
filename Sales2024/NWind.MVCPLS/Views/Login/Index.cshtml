@@ -1,0 +1,25 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model Entities.LoginRequest
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    vdfxgdfgdf
+    @using (Html.BeginForm())
+    {
+        <div>Usuario: @Html.TextBoxFor(p => p.Username)</div>
+        <div>Contraseña: @Html.PasswordFor(p => p.Password)</div>
+
+        <div><input type="submit" name="login" value="Inciar Sesión" /></div>
+    }
+</body>
+</html>
